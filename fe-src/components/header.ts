@@ -17,13 +17,15 @@ class Header extends HTMLElement {
              .header-el {
                 margin:0 auto;
                 background-color: #26302E;
-                height: 60px;
+                height: 8vh;
                 display:flex;
                 flex-direction:row;
                 justify-content: space-between;
                 align-items:center;
                 padding:0 10px;
-             }
+                border-bottom-left-radius: 8px;
+                border-bottom-right-radius: 8px;
+                }
 
               .imagen{
               width:30px;
