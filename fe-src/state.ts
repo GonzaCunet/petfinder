@@ -1,8 +1,10 @@
 const state = {
-  location: "",
-  lat: "",
-  long: "",
-  secId: "",
+  data: {
+    location: "",
+    lat: NaN,
+    long: NaN,
+    secId: "",
+  },
 };
 
 export { state };

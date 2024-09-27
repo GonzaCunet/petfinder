@@ -1,4 +1,6 @@
 const homephoto = require("./../images/homephoto.svg");
+import { Router } from "@vaadin/router";
+import { state } from "../state";
 export class HomeInit extends HTMLElement {
   connectedCallback() {
     this.render();
@@ -26,7 +28,9 @@ export class HomeInit extends HTMLElement {
             // Si se obtiene la ubicación, la mostramos
             const latitude = position.coords.latitude; // Latitud
             const longitude = position.coords.longitude; // Longitud
-            console.log(`Latitud: ${latitude}, Longitud: ${longitude}`);
+            state.data.lat = latitude;
+            state.data.long = longitude;
+            Router.go("home-mascotas");
           },
           (error) => {
             // Manejo de errores

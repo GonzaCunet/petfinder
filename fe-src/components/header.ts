@@ -9,8 +9,8 @@ class Header extends HTMLElement {
   }
   render() {
     const shadow = this.attachShadow({ mode: "open" });
-    const header = document.createElement("div");
     const style = document.createElement("style");
+    const header = document.createElement("div");
 
     header.className = "header-el";
     style.innerHTML = `      
