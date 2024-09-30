@@ -10,7 +10,7 @@ export class Button extends HTMLElement {
     const buttonEl = document.createElement("button");
     const buttonColor: any = this.getAttribute("color");
 
-    style.innerHTML = `
+    style.innerHTML = /*css*/ `
     .root{
       width: 270px;
       height: 50px;

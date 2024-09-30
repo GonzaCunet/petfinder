@@ -10,7 +10,7 @@ export class HomeInit extends HTMLElement {
     <header-el></header-el>
     <div class="main">
       <img class="imagen" src=${homephoto} alt="">
-      <h1 class="tittle">Pet Finder App</h1>
+      <h1 class="title">Pet Finder App</h1>
       <h2 class="text">Encontra y reportá<br> mascotas perdidas<br> cerca de tu ubicación</h2>
       <button-el class="location">Dar mi ubicación actual</button-el>
       <button-el class="howWorks" color="#00A884">¿Cómo funciona Pet Finder?</button-el>

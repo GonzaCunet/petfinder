@@ -4,8 +4,14 @@ export class HomeMascotasInit extends HTMLElement {
   }
   render() {
     this.innerHTML = `
+    
     <header-el></header-el>
-    <cards-el></cards-el>
+    <div class="main-mascotas">
+      <h1 class="tittle-mascotas">Mascotas perdidas cerca</h1>
+      <cards-el></cards-el>
+      <cards-el></cards-el>
+      <cards-el></cards-el>
+    </div>
     `;
   }
 }

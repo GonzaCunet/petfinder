@@ -8,28 +8,6 @@ body {
   width: 100%;
   background: linear-gradient(191.08deg, #ffffff 8.17%, #def4f0 62.61%);
 }
-.formulario {
-  height: 700px;
-  width: 600px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-
-  padding-left: 30px;
-  padding-bottom: 30px;
-  border: 2px solid black;
-  border-radius: 5px;
-}
-
-.foto-input {
-  height: 50px;
-  width: 220px;
-}
-.input {
-  height: 30px;
-  width: 250px;
-}
 
 .img {
   height: 300px;
