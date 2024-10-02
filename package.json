@@ -1,10 +1,10 @@
 {
-  "name": "mvc-profile",
+  "name": "pet-finder",
   "version": "1.0.0",
   "description": "",
   "source": "./fe-src/index.html",
   "scripts": {
-    "dev:be": "nodemon --watch ./be-src/index.ts --exec ts-node ./be-src/dev.ts",
+    "dev:be": "nodemon --watch ./be-src/index.ts --exec ts-node ./be-src/index.ts",
     "build:be": "tsc",
     "dev:fe": "parcel --dist-dir ./fe-dist/",
     "build:fe": "parcel build --dist-dir ./fe-dist/",

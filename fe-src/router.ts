@@ -5,4 +5,5 @@ router.setRoutes([
   { path: "/", component: "home-page" },
   { path: "/homemascotas", component: "home-mascotas" },
   { path: "/ingresar", component: "ingresar-page" },
+  { path: "/signup", component: "signup-page" },
 ]);

@@ -1,11 +1,8 @@
+import "./dev";
 import * as express from "express";
 import * as path from "path";
 import * as cors from "cors";
-import {
-  createProfiles,
-  getProfiles,
-  cloudinaryPhoto,
-} from "./controller/profiles";
+import { createUsers, getUsers } from "./controller/users";
 
 const app = express();
 app.use(cors());
@@ -16,21 +13,20 @@ app.use(
   })
 );
 
-app.post("/profile", async (req, res) => {
+app.post("/auth", async (req, res) => {
   try {
-    const { name, bio, photoURL } = req.body;
-    const photoCloudinaryURL = await cloudinaryPhoto(req.body);
-    const respuesta = await createProfiles(name, bio, photoCloudinaryURL);
-    res.json(respuesta);
+    const { name, location, email } = req.body;
+    const respuesta = await createUsers(name, location, email);
+    res.status(201).json(respuesta);
   } catch (error) {
     console.log(error, "error al crear el perfil");
-    res.json("error al crear el perfil");
+    res.status(400).json(error);
   }
 });
 
 app.get("/profiles", async (req, res) => {
-  const profiles = await getProfiles();
-  res.json(profiles);
+  // const profiles = await getProfiles();
+  // res.json(profiles);
 });
 
 const staticDirPath = path.resolve(__dirname, "../fe-dist");
