@@ -46,7 +46,7 @@ export async function authUsers(email, password, user_id) {
     let auth = await Auth.create({
       email,
       user_id,
-      passwordHasheado,
+      password: passwordHasheado,
     });
 
     return auth;
