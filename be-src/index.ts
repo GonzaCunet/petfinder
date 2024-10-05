@@ -2,7 +2,9 @@ import "./dev";
 import * as express from "express";
 import * as path from "path";
 import * as cors from "cors";
-import { createUsers, getUsers, authUsers } from "./controller/users";
+import { createUsers, getUsers } from "./controller/users";
+
+import { authToken, authUsers } from "./controller/auth";
 
 const app = express();
 app.use(cors());
@@ -23,6 +25,16 @@ app.post("/auth", async (req, res) => {
   } catch (error) {
     console.log(error, "error al crear el perfil");
     res.status(400).json(error);
+  }
+});
+app.post("/auth/token", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const respuesta = await authToken(email, password);
+    return res.status(201).json(respuesta);
+  } catch (error) {
+    res.status(400).json(error.message);
   }
 });
 
