@@ -1,9 +1,36 @@
+const API_BASE_URL = process.env.API_BASE_URL;
+
 const state = {
   data: {
-    location: "",
     lat: NaN,
-    long: NaN,
-    secId: "",
+    lng: NaN,
+  },
+
+  listeners: [],
+
+  getState() {
+    return this.data;
+  },
+
+  setState(state) {
+    this.data = state;
+    for (const cb of this.listeners) {
+      cb();
+    }
+  },
+
+  subscribe(cb: (any) => any) {
+    this.listeners.push(cb);
+  },
+
+  async userSignUp(email, password, name) {
+    return fetch(API_BASE_URL + "/auth", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ email, password, name }),
+    }).then((res) => {
+      return res.json();
+    });
   },
 };
 

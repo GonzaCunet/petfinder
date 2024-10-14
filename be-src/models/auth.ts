@@ -5,7 +5,6 @@ Auth.init(
   {
     password: DataTypes.STRING,
     email: DataTypes.STRING,
-    user_id: DataTypes.STRING,
   },
   { sequelize, modelName: "Auth" }
 );

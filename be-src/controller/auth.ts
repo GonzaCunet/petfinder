@@ -9,15 +9,18 @@ export async function hashPassword(text: string) {
   return crypto.createHash("sha256").update(JSON.stringify(text)).digest("hex");
 }
 
-export async function authUsers(email, password, user_id) {
+export async function authUsers(email, password) {
   const passwordHasheado = await hashPassword(password);
   try {
-    let auth = await Auth.create({
-      email,
-      user_id,
-      password: passwordHasheado,
-    });
+    let auth = await Auth.findOne({ where: { email } });
 
+    if (!auth) {
+      await Auth.create({ email, password: passwordHasheado });
+      return auth;
+    }
+    if (auth) {
+      throw new Error("este usuario ya se ha registrado salu2");
+    }
     return auth;
   } catch (error) {
     throw error;
@@ -40,5 +43,22 @@ export async function authToken(email, password) {
     throw error;
   }
 }
+export async function getAuth() {
+  try {
+    const users = await Auth.findAll();
+    return users;
+  } catch (error) {
+    throw error;
+  }
+}
 
-export async function authMiddleware() {}
+export function authMiddleware(req, res, next) {
+  const token = req.headers.authorization.split(" ")[1];
+  try {
+    const data = jwt.verify(token, secret);
+    req._user = data;
+    next();
+  } catch (error) {
+    res.status(401).json({ error: "token no autorizado" });
+  }
+}

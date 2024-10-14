@@ -2,9 +2,14 @@ import "./dev";
 import * as express from "express";
 import * as path from "path";
 import * as cors from "cors";
-import { createUsers, getUsers } from "./controller/users";
+import { createUsers, getUserByPk, getUsers } from "./controller/users";
 
-import { authToken, authUsers } from "./controller/auth";
+import {
+  authMiddleware,
+  authToken,
+  authUsers,
+  getAuth,
+} from "./controller/auth";
 
 const app = express();
 app.use(cors());
@@ -15,13 +20,17 @@ app.use(
     limit: "50mb",
   })
 );
-app.post("/auth", async (req, res) => {
-  const { name, location, email, password } = req.body;
-  try {
-    const respuesta = await createUsers(name, location, email);
-    const respuestaAuth = await authUsers(email, password, respuesta.get("id"));
 
-    res.json({ respuesta, respuestaAuth });
+app.post("/auth", async (req, res) => {
+  const { name, email, password } = req.body;
+  try {
+    const respuestaAuth = await authUsers(email, password);
+    const respuestaUser = await createUsers(
+      name,
+      respuestaAuth.get("id") as string
+    );
+
+    res.json({ respuestaUser, respuestaAuth });
   } catch (error) {
     console.log(error, "error al crear el perfil");
     res.status(400).json(error);
@@ -38,9 +47,15 @@ app.post("/auth/token", async (req, res) => {
   }
 });
 
-app.get("/users", async (req, res) => {
-  const profiles = await getUsers();
-  res.json(profiles);
+app.get("/user", authMiddleware, async (req, res) => {
+  const user_id = req._user.id;
+  const respuesta = await getUserByPk(user_id);
+  res.json(respuesta);
+});
+
+app.get("/auth", async (req, res) => {
+  const users = await getAuth();
+  res.json(users);
 });
 
 const staticDirPath = path.resolve(__dirname, "../fe-dist");

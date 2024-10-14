@@ -3,6 +3,7 @@ import * as jwt from "jsonWebToken";
 import * as crypto from "crypto";
 import { cloudinary } from "../lib/cloudinary";
 import { User, Auth, Pets } from "./../models/models";
+const secret = process.env.SECRET;
 // export async function cloudinaryPhoto(updateData) {
 //   if (updateData.photoURL) {
 //     const imagen = await cloudinary.uploader.upload(updateData.photoURL, {
@@ -14,21 +15,9 @@ import { User, Auth, Pets } from "./../models/models";
 //   }
 // }
 
-export async function createUsers(
-  name: string,
-  location: string,
-  email: string
-) {
+export async function createUsers(name: string, user_id: string) {
   try {
-    let user = await User.findOne({ where: { email } });
-    if (!user) {
-      user = await User.create({ name, location, email });
-      return user;
-    }
-
-    if (user) {
-      throw new Error("Email already exists");
-    }
+    const user = await User.create({ name, user_id });
     return user;
   } catch (error) {
     console.log(error);
@@ -39,11 +28,24 @@ export async function createUsers(
   }
 }
 
-export async function getUsers() {
+export async function getUserByPk(user_id) {
   try {
-    const profiles = await Auth.findAll();
+    const profiles = await User.findByPk(user_id);
     return profiles;
   } catch (error) {
     throw error;
   }
+}
+
+export async function getUsers() {
+  try {
+    const users = await User.findAll();
+    return users;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function hashPassword(text: string) {
+  return crypto.createHash("sha256").update(JSON.stringify(text)).digest("hex");
 }
