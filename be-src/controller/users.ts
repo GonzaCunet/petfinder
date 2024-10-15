@@ -15,9 +15,9 @@ const secret = process.env.SECRET;
 //   }
 // }
 
-export async function createUsers(name: string, user_id: string) {
+export async function createUsers(name: string, id) {
   try {
-    const user = await User.create({ name, user_id });
+    const user = await User.create({ name, AuthId: id });
     return user;
   } catch (error) {
     console.log(error);

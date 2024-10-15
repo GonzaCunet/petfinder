@@ -39,15 +39,20 @@ export class SignUpInit extends HTMLElement {
       const passwordcheck = target?.elements["confirmarcontraseña"].value;
       if (password != passwordcheck) {
         console.log("el password no coincide");
-      } else {
-        console.log("la contraseña es correcta");
-      }
-      if (email == "" || password == "" || passwordcheck == "" || name == "") {
+      } else if (
+        email == "" ||
+        password == "" ||
+        passwordcheck == "" ||
+        name == ""
+      ) {
         console.log(
           "debe completar todos los campos correctamente para poder continuar"
         );
+      } else {
+        state.userSignUp(email, password, name).then((res) => {
+          console.log(res);
+        });
       }
-      state.userSignUp(email, password, name);
     });
   }
 }

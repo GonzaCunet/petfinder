@@ -6,4 +6,5 @@ router.setRoutes([
   { path: "/homemascotas", component: "home-mascotas" },
   { path: "/ingresar", component: "ingresar-page" },
   { path: "/signup", component: "signup-page" },
+  { path: "/reportpets", component: "report-page" },
 ]);

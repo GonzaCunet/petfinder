@@ -4,4 +4,3 @@
 /be-dist
 .env
 /be-src/db/sync.ts
-/.env

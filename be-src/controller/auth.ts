@@ -13,13 +13,12 @@ export async function authUsers(email, password) {
   const passwordHasheado = await hashPassword(password);
   try {
     let auth = await Auth.findOne({ where: { email } });
-
-    if (!auth) {
-      await Auth.create({ email, password: passwordHasheado });
-      return auth;
-    }
     if (auth) {
       throw new Error("este usuario ya se ha registrado salu2");
+    }
+
+    if (!auth) {
+      auth = await Auth.create({ email, password: passwordHasheado });
     }
     return auth;
   } catch (error) {

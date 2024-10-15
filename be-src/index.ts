@@ -30,10 +30,10 @@ app.post("/auth", async (req, res) => {
       respuestaAuth.get("id") as string
     );
 
-    res.json({ respuestaUser, respuestaAuth });
+    res.json({ message: "usuario creado" });
   } catch (error) {
     console.log(error, "error al crear el perfil");
-    res.status(400).json(error);
+    res.status(400).json(error.message);
   }
 });
 app.post("/auth/token", async (req, res) => {

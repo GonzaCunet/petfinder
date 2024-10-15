@@ -26,7 +26,7 @@ const state = {
   async userSignUp(email, password, name) {
     return fetch(API_BASE_URL + "/auth", {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "Content-type": "application/json" },
       body: JSON.stringify({ email, password, name }),
     }).then((res) => {
       return res.json();

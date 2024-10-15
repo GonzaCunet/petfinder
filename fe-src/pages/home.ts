@@ -29,8 +29,8 @@ export class HomeInit extends HTMLElement {
             const latitude = position.coords.latitude; // Latitud
             const longitude = position.coords.longitude; // Longitud
             state.data.lat = latitude;
-            state.data.long = longitude;
-            Router.go("home-mascotas");
+            state.data.lng = longitude;
+            Router.go("homemascotas");
           },
           (error) => {
             // Manejo de errores
