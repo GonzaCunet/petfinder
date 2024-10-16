@@ -1,6 +1,6 @@
 import Dropzone from "dropzone";
-import "./mapbox.js";
 import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
 
 // const MAPBOX_TOKEN = process.env.MAPBOX_TOKEN;
 // if (!MAPBOX_TOKEN) {
@@ -8,10 +8,6 @@ import mapboxgl from "mapbox-gl";
 // }
 // mapboxgl.accessToken = MAPBOX_TOKEN;
 
-const MAPBOX_TOKEN =
-  "pk.eyJ1IjoiZXplcXVpZWw5MyIsImEiOiJja3U0aTAyc2gwaGg1MnBvNmhyemJzbDc2In0.VfvIXjWgL8_dqs1ZKlQorA";
-mapboxgl.accessToken = MAPBOX_TOKEN;
-let map;
 export class ReportPetsInit extends HTMLElement {
   connectedCallback() {
     this.render();
@@ -25,14 +21,15 @@ export class ReportPetsInit extends HTMLElement {
         <h2 class="reportpet-text">Ingresá la siguiente información para realizar el reporte de la mascota</h2>
         <div class="imageupload-container">
             <form class="reportpets-formulario">
-            <label class="label-text" for="nombre">Nombre</label>
-            <input class="input" type="text" name="nombre" />
-            <label class="uploadimg">Agregar foto</label>
-            <img class="foto-input">
-            <input name="q" type="search" />
-            <button>Buscar</button>
+              <label class="label-text" for="nombre">Nombre</label>
+              <input class="input" type="text" name="nombre" />
+              <label class="uploadimg">Agregar foto</label>
+              <img class="foto-input">
+               <input name="q" type="search" />
+              <button>Buscar</button>
+              <div id='map' style='width: 300px; height: 200px;'></div>
             </form>
-            <div class="map"></div>
+            
             
       </div>
       `;
@@ -50,15 +47,13 @@ export class ReportPetsInit extends HTMLElement {
       pictureFile = file.dataURL;
       imgDropzone.src = pictureFile;
     });
-  }
-  initMap() {
-    mapboxgl.accessToken = MAPBOX_TOKEN;
-    const mapContainer = this.querySelector(".map") as HTMLElement;
-    map = new mapboxgl.Map({
-      container: mapContainer,
-      style: "mapbox://styles/mapbox/streets-v12",
-      center: [-58.381775, -34.603851], // Coordenadas del Obelisco en Buenos Aires long-lat
-      zoom: 0, // Nivel de zoom inicial
+    mapboxgl.accessToken =
+      "pk.eyJ1IjoiZXplcXVpZWw5MyIsImEiOiJja3U0aTAyc2gwaGg1MnBvNmhyemJzbDc2In0.VfvIXjWgL8_dqs1ZKlQorA";
+    const map = new mapboxgl.Map({
+      container: "map", // container ID
+      style: "mapbox://styles/mapbox/streets-v12", // style URL
+      center: [-74.5, 40], // starting position [lng, lat]
+      zoom: 9, // starting zoom
     });
   }
 }

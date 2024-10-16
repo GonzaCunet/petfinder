@@ -32,9 +32,3 @@
   border-radius: 3px;
   object-fit: contain;
 }
-
-#map {
-  border: solid;
-  width: 334px;
-  height: 253px;
-}
