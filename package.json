@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/mapbox-gl": "^3.4.0",
     "nodemon": "^3.1.4",
     "parcel": "^2.12.0"
   },
@@ -23,6 +24,7 @@
     "dropzone": "^6.0.0-beta.2",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
+    "mapbox-gl": "^3.7.0",
     "pg": "^8.12.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.3"
