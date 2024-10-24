@@ -1,16 +1,11 @@
 import Dropzone from "dropzone";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import {
-  autofill,
-  config,
-  MapboxAddressAutofill,
-  MapboxSearchBox,
-  MapboxGeocoder,
-} from "@mapbox/search-js-web";
 const MAPBOX_TOKEN =
   "pk.eyJ1IjoiZXplcXVpZWw5MyIsImEiOiJja3U0aTAyc2gwaGg1MnBvNmhyemJzbDc2In0.VfvIXjWgL8_dqs1ZKlQorA";
 let map;
+
+const saveData = { name: "", lat: "", lng: "", location: "", photoURL: "" };
 export class ReportPetsInit extends HTMLElement {
   connectedCallback() {
     this.render();
@@ -19,30 +14,31 @@ export class ReportPetsInit extends HTMLElement {
     this.innerHTML = /*html*/ `
       
       <header-el></header-el>
-      <div class="report-container">
-        <h1 class="tittle-mascotas">Reportar Mascotas</h1>
-        <h2 class="reportpet-text">Ingresá la siguiente información para realizar el reporte de la mascota</h2>
-        <div class="imageupload-container">
-            <form class="reportpets-formulario">
-              <label class="label-text" for="nombre">Nombre</label>
-              <input class="input" type="text" name="nombre" />
-              <label class="uploadimg">Agregar foto</label>
-              <img class="foto-input">
-                <form class="search-form">
-                  <label tipoTexto="parrafo">1-Buscar por ubicación (Ciudad, Provincia)</label>
-                  <input class="my-input q" name="q" type="search">
-                  <button class="buscar-ubi">Buscar</button>
-                  <label tipoTexto="parrafo">2-Seleccionar un punto en el mapa</label>
-                  <div class="map" id='map' style='width: 300px; height: 200px;'></div>
-                  <div class="contenedor-button">
-                  <button class="button-reportar"><mi-texto tipoTexto="parrafo">Reportar mascota</mi-texto></button>
-                  </div>
-                </form>
-            </form>
-              
-        </div>
-      `;
+        <div class="report-container">
+          <h1 class="tittle-mascotas">Reportar Mascotas</h1>
+          <h2 class="reportpet-text">Ingresá la siguiente información para realizar el reporte de la mascota</h2>
 
+          <form class="form-name" id="form1">
+            <label class="label-text" for="nombre">Nombre</label>
+            <input class="input-report" type="text" name="name" />
+          </form>
+
+          <div class="imageupload-container">
+            <label class="uploadimg">Agregar foto</label>
+            <img class="foto-input">
+          </div>
+
+            <form class="search-form">
+              <label >1-Buscar por ubicación (Ciudad, Provincia)</label>
+              <input class="input-report" name="q" type="search">
+              <button-el>Buscar</button-el>
+              <label >2-Seleccionar un punto en el mapa</label>
+                  <div class="map" id='map' style='width: 300px; height: 200px;'></div>
+                  
+                  </form>
+                  <button-el id="reportbutton">Reportar mascota</button-el>
+        </div>
+                  `;
     const imgDropzone = this.querySelector(".foto-input") as HTMLImageElement;
     let pictureFile;
 
@@ -55,9 +51,27 @@ export class ReportPetsInit extends HTMLElement {
       // usando este evento pueden acceder al dataURL directamente
       pictureFile = file.dataURL;
       imgDropzone.src = pictureFile;
+      saveData.photoURL = pictureFile;
     });
     this.initMap();
     this.buscarDir();
+
+    const formName = this.querySelector(".form-name") as HTMLFormElement | null;
+    formName?.addEventListener("submit", (e: any) => {
+      e.preventDefault();
+      const nameInput = formName.elements.namedItem("name") as HTMLInputElement;
+      console.log(nameInput.value);
+      saveData.name = nameInput.value;
+      console.log(saveData);
+    });
+
+    const button1 = document.getElementById("reportbutton");
+    button1?.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (formName) {
+        formName.requestSubmit();
+      }
+    });
   }
 
   initMap() {
@@ -68,7 +82,7 @@ export class ReportPetsInit extends HTMLElement {
       container: mapContainer,
       style: "mapbox://styles/mapbox/streets-v12",
       center: [-58.381775, -34.603851], // Coordenadas del Obelisco en Buenos Aires long-lat
-      zoom: 0,
+      zoom: 8,
       maxBounds: [
         [-75, -55], // Esquina suroeste de Argentina
         [-53, -20], // Esquina noreste de Argentina
@@ -76,35 +90,88 @@ export class ReportPetsInit extends HTMLElement {
     });
   }
   initSearchForm(query: string) {
+    // Cambiar el cursor a 'wait' mientras se realiza la búsqueda
+    map.getCanvas().style.cursor = "wait";
+
     fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${MAPBOX_TOKEN}`
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${MAPBOX_TOKEN}&country=AR`
     )
       .then((resp) => resp.json())
       .then((data) => {
-        const [longitude, latitude] = data.features[0].center;
-        const placeName = data.features[0].place_name;
-        // const currentState = state.getState();
-        const nameUbicacionPet = placeName.split(" ").slice(0, 4).join(" ");
-        const nameUbicacion = nameUbicacionPet.split(",").join("");
-        // currentState.petNameUbi = nameUbicacion;
-        // state.setState(currentState);
-        map.flyTo({ center: [longitude, latitude], zoom: 15 });
-        map.on("click", (e) => {
-          const { lng, lat } = e.lngLat;
-          console.log(lng, lat);
-          console.log(e);
-          // currentState.petLong = lng;
-          // currentState.petLat = lat;
-          // state.setState(currentState);
+        if (data.features.length > 0) {
+          const [longitude, latitude] = data.features[0].center;
+          const placeName = data.features[0].place_name;
+          const nameUbicacionPet = placeName.split(" ").slice(0, 4).join(" ");
+          const nameUbicacion = nameUbicacionPet.split(",").join("");
+
+          saveData.lng = longitude;
+          saveData.lat = latitude;
+          saveData.location = nameUbicacion;
+
+          // Centrar el mapa en la ubicación buscada
+          map.flyTo({ center: [longitude, latitude], zoom: 15 });
+
+          // Cambiar el cursor a 'crosshair' cuando se está en modo de selección en el mapa
+          map.getCanvas().style.cursor = "crosshair";
+
           // Eliminar marcadores existentes (si los hay)
           if (map.getLayer("marker")) {
             map.removeLayer("marker");
             map.removeSource("marker");
           }
-          // Agregar marcador en la ubicación seleccionada
-          map.addSource("marker", {
-            type: "geojson",
-            data: {
+
+          // Cargar la imagen de una flecha o cualquier otro icono personalizado
+          map.loadImage(
+            "https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png",
+            (error, image) => {
+              if (error) throw error;
+
+              // Asegúrate de agregar la imagen solo una vez
+              if (!map.hasImage("custom-marker")) {
+                map.addImage("custom-marker", image);
+              }
+
+              // Agregar el marcador en el punto de la ubicación buscada
+              map.addSource("marker", {
+                type: "geojson",
+                data: {
+                  type: "FeatureCollection",
+                  features: [
+                    {
+                      type: "Feature",
+                      geometry: {
+                        type: "Point",
+                        coordinates: [longitude, latitude], // Coordenadas de la ubicación buscada
+                      },
+                    },
+                  ],
+                },
+              });
+
+              // Añadir la capa del marcador con el icono personalizado
+              map.addLayer({
+                id: "marker",
+                type: "symbol",
+                source: "marker",
+                layout: {
+                  "icon-image": "custom-marker", // Usamos la imagen cargada
+                  "icon-size": 1.0, // Tamaño del marcador (puedes ajustarlo)
+                  "icon-anchor": "bottom", // Ancla el marcador en la parte inferior
+                },
+              });
+            }
+          );
+
+          // Evento para cambiar la ubicación del marcador al hacer clic en el mapa
+          map.on("click", (e) => {
+            const { lng, lat } = e.lngLat;
+
+            saveData.lng = longitude;
+            saveData.lat = latitude;
+            saveData.location = nameUbicacion;
+
+            // Actualizar el marcador a la nueva ubicación seleccionada
+            map.getSource("marker").setData({
               type: "FeatureCollection",
               features: [
                 {
@@ -115,22 +182,21 @@ export class ReportPetsInit extends HTMLElement {
                   },
                 },
               ],
-            },
+            });
           });
 
-          map.addLayer({
-            id: "marker",
-            type: "symbol",
-            source: "marker",
-            layout: {
-              "icon-image": "marker", // Cambia esto por el icono que desees
-              "icon-size": 1.5,
-            },
-          });
-        });
+          // Restablecer el cursor después de la búsqueda
+          map.getCanvas().style.cursor = "";
+        } else {
+          console.error("No se encontraron resultados en Argentina.");
+          // Restablecer el cursor si no hay resultados
+          map.getCanvas().style.cursor = "";
+        }
       })
       .catch((error) => {
         console.error("Error al realizar la búsqueda:", error);
+        // Restablecer el cursor en caso de error
+        map.getCanvas().style.cursor = "";
       });
   }
   buscarDir() {

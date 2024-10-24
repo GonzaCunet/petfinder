@@ -25,14 +25,20 @@ export async function authUsers(email, password) {
     throw error;
   }
 }
+
 export async function authToken(email, password) {
   const passwordHasheado = await hashPassword(password);
   try {
-    const userAuth = await Auth.findOne({
+    const userAuth: any = await Auth.findOne({
       where: { email, password: passwordHasheado },
+      include: {
+        model: User,
+        attributes: ["id"],
+      },
     });
     if (userAuth) {
-      const token = jwt.sign({ id: userAuth.get("user_id") }, secret);
+      const userId = userAuth.User.id;
+      const token = jwt.sign({ id: userId }, secret);
       return token;
     }
     if (!userAuth) {
@@ -56,6 +62,7 @@ export function authMiddleware(req, res, next) {
   try {
     const data = jwt.verify(token, secret);
     req._user = data;
+    console.log({ data });
     next();
   } catch (error) {
     res.status(401).json({ error: "token no autorizado" });

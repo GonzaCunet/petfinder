@@ -10,6 +10,9 @@ import {
   authUsers,
   getAuth,
 } from "./controller/auth";
+import { cloudinary } from "./lib/cloudinary";
+import { createPets, cloudinaryPhotoUpload } from "./controller/pets";
+import { Auth } from "./models/models";
 
 const app = express();
 app.use(cors());
@@ -21,6 +24,34 @@ app.use(
   })
 );
 
+app.post("/pets", authMiddleware, async (req, res) => {
+  const { name, lastLocation, photoURL, lat, lng } = req.body;
+  const UserId = req._user.id;
+  console.log({ req: req._user });
+  try {
+    const createPhoto = await cloudinaryPhotoUpload(photoURL);
+    const returnpet = await createPets(
+      name,
+      lastLocation,
+      createPhoto,
+      lat,
+      lng,
+      UserId
+    );
+    res.json({ message: "mascota creada", result: returnpet });
+  } catch (error) {
+    console.log(error, "error al crear la mascota");
+    res.status(400).json(error.message);
+  }
+});
+
+app.get("/auth", async (req, res) => {
+  // const userId = await User.findAll({ include: });
+  const { authId } = req.body;
+  const respuesta = await Auth.findAll();
+  res.json({ respuesta });
+});
+
 app.post("/auth", async (req, res) => {
   const { name, email, password } = req.body;
   try {
@@ -30,7 +61,7 @@ app.post("/auth", async (req, res) => {
       respuestaAuth.get("id") as string
     );
 
-    res.json({ message: "usuario creado" });
+    res.json({ message: "usuario creado", respuestaUser: respuestaUser });
   } catch (error) {
     console.log(error, "error al crear el perfil");
     res.status(400).json(error.message);
